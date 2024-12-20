@@ -6,8 +6,15 @@ const userDetails = require('../controller/userDetails')
 const logout = require('../controller/logout')
 const updateUserDetails = require('../controller/updateUserDetails')
 const searchUser = require('../controller/searchUser')
-const createGroup = require('../controller/groupController')
-const getAllGroups = require('../controller/groupController')
+const {
+    getGroupById,
+    addMemberToGroup,
+    removeMemberFromGroup,
+    deleteGroup,
+    updateGroup,
+    createGroup,
+    getAllGroups
+} = require('../controller/groupController');
 
 const router = express.Router()
 
@@ -25,10 +32,25 @@ router.get('/logout', logout)
 router.post('/update-user', updateUserDetails)
 //search user
 router.post("/search-user", searchUser)
+
 // group create
 router.post("/create-group", createGroup)
 // group create
-// router.get("/groups", getAllGroups)
+router.get("/groups", getAllGroups)
 
+// Get a group by ID
+router.get('/group/:id', getGroupById);
 
-module.exports = router
+// Add a member to a group
+router.post('/group/add-member/:id', addMemberToGroup);
+
+// Remove a member from a group
+router.post('/group/remove-member/:id', removeMemberFromGroup);
+
+// Delete a group
+router.delete('/delete-group/:id', deleteGroup);
+
+// Update group details
+router.put('/update-group/:id', updateGroup);
+
+module.exports = router;

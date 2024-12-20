@@ -168,12 +168,13 @@ const removeMemberFromGroup = async (req, res) => {
 };
 
 
-
-
-module.exports = getGroupById;
-module.exports = addMemberToGroup;
-module.exports = removeMemberFromGroup;
-module.exports = deleteGroup;
-module.exports = updateGroup;
-module.exports = createGroup;
-module.exports = getAllGroups;
+// groupController.js
+module.exports = {
+    getGroupById,
+    addMemberToGroup,
+    removeMemberFromGroup,
+    deleteGroup,
+    updateGroup,
+    createGroup,
+    getAllGroups
+};
