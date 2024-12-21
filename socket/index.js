@@ -28,8 +28,9 @@ io.on('connection', async (socket) => {
 
     // Get user details from token
     const user = await getUserDetailsFromToken(socket, token);
-    
+
     if (user && user._id) {
+        
         socket.join(user._id.toString());
         onlineUser.add(user._id.toString());
         io.emit('onlineUser', Array.from(onlineUser));
@@ -137,8 +138,6 @@ io.on('connection', async (socket) => {
         }
     });
 
-    // Server-side (Node.js with Socket.io)
-
     socket.on('start-call', ({ callerId, receiverId, roomId }) => {
         // Emit to the receiver that there's an incoming call
         io.to(receiverId).emit('incoming-call', {
@@ -147,6 +146,16 @@ io.on('connection', async (socket) => {
             roomId
         });
     });
+
+    socket.on('start-group-call', ({ callerId, receiversId, roomId, groupName }) => {
+        receiversId.map((receiverId) => {
+            io.to(receiverId).emit('incoming-group-call', {
+                callerId,
+                groupName,
+                roomId
+            })
+        })
+    })
 
     socket.on('accept-call', ({ roomId, callerId, receiverId }) => {
         // Emit to both caller and receiver that the call has started

@@ -2,11 +2,18 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
 const connectDB = require('./config/connectDB');
+const morgan = require('morgan'); // Import morgan
+
 const router = require('./routes/index');
 const cookiesParser = require('cookie-parser');
 const { app, server } = require('./socket/index');
 
-// const app = express()
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+} else {
+    app.use(morgan('combined'));
+}
+
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true
