@@ -1,4 +1,5 @@
 const express = require('express')
+const authenticateToken = require('../middleware/protected')
 const registerUser = require('../controller/registerUser')
 const checkEmail = require('../controller/checkEmail')
 const checkPassword = require('../controller/checkPassword')
@@ -25,32 +26,32 @@ router.post('/email', checkEmail)
 //check user password
 router.post('/password', checkPassword)
 //login user details
-router.get('/user-details', userDetails)
+router.get('/user-details', authenticateToken, userDetails)
 //logout user
-router.get('/logout', logout)
+router.get('/logout', authenticateToken, logout)
 //update user details
-router.post('/update-user', updateUserDetails)
+router.post('/update-user', authenticateToken, updateUserDetails)
 //search user
-router.post("/search-user", searchUser)
+router.post("/search-user", authenticateToken, searchUser)
 
 // group create
-router.post("/create-group", createGroup)
+router.post("/create-group", authenticateToken, createGroup)
 // group create
-router.get("/groups", getAllGroups)
+router.get("/groups", authenticateToken, getAllGroups)
 
 // Get a group by ID
-router.get('/group/:id', getGroupById);
+router.get('/group/:id', authenticateToken, getGroupById);
 
 // Add a member to a group
-router.post('/group/add-member/:id', addMemberToGroup);
+router.post('/group/add-member/:id', authenticateToken, addMemberToGroup);
 
 // Remove a member from a group
-router.post('/group/remove-member/:id', removeMemberFromGroup);
+router.post('/group/remove-member/:id', authenticateToken, removeMemberFromGroup);
 
 // Delete a group
-router.delete('/delete-group/:id', deleteGroup);
+router.delete('/delete-group/:id', authenticateToken, deleteGroup);
 
 // Update group details
-router.put('/update-group/:id', updateGroup);
+router.put('/update-group/:id', authenticateToken, updateGroup);
 
 module.exports = router;

@@ -27,8 +27,8 @@ io.on('connection', async (socket) => {
     const token = socket.handshake.auth.token;
 
     // Get user details from token
-    const user = await getUserDetailsFromToken(token);
-
+    const user = await getUserDetailsFromToken(socket, token);
+    
     if (user && user._id) {
         socket.join(user._id.toString());
         onlineUser.add(user._id.toString());
