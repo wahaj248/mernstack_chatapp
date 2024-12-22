@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
+import { TiTick } from "react-icons/ti";
+
 import Avatar from './Avatar'
 import { IoMdCall } from "react-icons/io";
 import { FaAngleLeft } from "react-icons/fa6";
@@ -370,8 +372,12 @@ const MessagePage = () => {
                         )
                       }
                     </div>
-                    <p className='px-2'>{msg.text}</p>
-                    <p className='text-xs ml-auto w-fit'>{moment(msg.createdAt).format('hh:mm')}</p>
+                    <div className="flex items-center justify-between px-2">
+                      <p className="flex-1">{msg.text}</p>
+                      <p className="text-xs ml-2">{moment(msg.createdAt).format('hh:mm')}</p>
+                      {msg?.seen ? <TiTick className="text-blue-500" size={12} /> : <TiTick className="text-grey-500" size={12} />  }
+                    </div>
+
                   </div>
                 )
               })
@@ -399,30 +405,33 @@ const MessagePage = () => {
                         )
                       }
                     </div>
-                    <div className="flex items-start space-x-2 p-2">
-                      {/* Avatar Section */}
-                      <Avatar
-                        width={30}
-                        height={30}
-                        name={msg.msgByUserId.name}
-                        imageUrl={msg?.msgByUserId.profile_pic}
-                        userId={msg?.msgByUserId._id}
-                      />
+                    <div className="flex items-start p-2">
+  {/* Avatar Section */}
+  <div className="flex items-center justify-center h-full">
+    <Avatar
+      width={40}
+      height={40}
+      name={msg.msgByUserId.name}
+      imageUrl={msg?.msgByUserId.profile_pic}
+      userId={msg?.msgByUserId._id}
+    />
+  </div>
 
-                      {/* Message Content Section */}
-                      <div className="flex flex-col">
-                        {/* User Name */}
-                        <p className="text-sm font-medium text-green-700">{msg.msgByUserId.name}</p>
+  {/* Message Content Section */}
+  <div className="flex flex-col ml-2 w-full">
+    {/* User Name */}
+    <p className="text-sm font-medium text-green-700 text-nowrap">{msg.msgByUserId.name}</p>
 
-                        {/* Message Text */}
-                        <p className="text-base text-gray-800">{msg.text}</p>
-                      </div>
+    {/* Message Text */}
+    <p className="text-base text-gray-800">{msg.text}</p>
+  </div>
 
-                      {/* Timestamp */}
-                      <p className="text-xs text-gray-500 ml-auto self-end">
-                        {moment(msg.createdAt).format('hh:mm A')}
-                      </p>
-                    </div>
+  {/* Timestamp and Tick Icon */}
+  <div className="flex flex- ml-2 items-end justify-between text-nowrap">
+    <p className="text-xs text-gray-500">{moment(msg.createdAt).format('hh:mm A')}</p>
+    {msg?.seen ? <TiTick className="text-blue-500" size={12} /> : <TiTick className="text-gray-500" size={12} />}
+  </div>
+</div>
 
                   </div>
                 )

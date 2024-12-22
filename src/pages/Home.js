@@ -14,6 +14,8 @@ import axiosFetch from '../axios'
 import { BASE_URL } from './BaseUrl'
 // import getSocketInstance from '../socketSingleton'
 import { io } from 'socket.io-client'
+import { useContext } from 'react'
+import myContext from '../context/myContext'
 
 
 const Home = () => {
@@ -28,6 +30,13 @@ const Home = () => {
   const [callerInfo, setCallerInfo] = useState(null);
   const [callTimeout, setCallTimeout] = useState(null);  // State to manage call timeout
   const ringtoneRef = useRef(new Audio(ringtone));
+  const context = useContext(myContext);
+  // console.log("check conetx" , context);
+  
+  // const { mode } = context;
+
+
+
   const [dataUser, setDataUser] = useState({
     name: "",
     email: "",
@@ -126,6 +135,8 @@ const Home = () => {
       const audio = new Audio(notificationSound);
       audio.play().catch((err) => console.error('Audio playback failed:', err));
     });
+  
+    
 
     dispatch(setSocketConnection(socketConnection))
 

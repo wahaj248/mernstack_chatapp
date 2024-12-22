@@ -37,9 +37,10 @@ const Sidebar = () => {
     useEffect(() => {
         if (socketConnection) {
             socketConnection.emit('sidebar', user._id)
-
+            socketConnection.on("group:conversation" , (data)=> console.log("data grp" , data));
+            
             socketConnection.on('conversation', (data) => {
-                console.log('conversation', data)
+                // console.log('conversation', data)
 
                 const conversationUserData = data.map((conversationUser, index) => {
                     if (conversationUser?.sender?._id === conversationUser?.receiver?._id) {
@@ -144,8 +145,9 @@ const Sidebar = () => {
                                         className='flex items-center gap-2 py-3 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer'
                                         onClick={() => {
                                             if (socketConnection) {
+                                                conv.unseenMsg = 0;
                                                 socketConnection.emit('seen', {
-                                                    conversationId: conv?._id,
+                                                    conversationId: conv?.userDetails?._id,
                                                     conversationType: "user"
                                                 });
                                             }
@@ -188,7 +190,6 @@ const Sidebar = () => {
                                                 <p className='text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full'>{conv?.unseenMsg}</p>
                                             )
                                         }
-
                                     </NavLink>
                                 </>
                             )
@@ -197,6 +198,7 @@ const Sidebar = () => {
                     <h3 className='text-lg font-bold px-4 mb-2 text-slate-800'>Groups</h3>
                     {
                         allUser.map((conv, index) => {
+                            console.log("DFFFFFFFFFADFFFFFF", conv);
                             if (!conv || !conv?.members || conv.type === "user") return null;
                             return (
                                 <>
@@ -206,6 +208,7 @@ const Sidebar = () => {
                                         className='flex items-center gap-2 py-3 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer'
                                         onClick={() => {
                                             if (socketConnection) {
+                                                conv.unseenMsg = 0;
                                                 socketConnection.emit('seen', {
                                                     conversationId: conv?._id,
                                                     conversationType: "group"
