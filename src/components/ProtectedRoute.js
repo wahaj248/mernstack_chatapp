@@ -11,8 +11,8 @@ function ProtectedRoute({ children }) {
     useEffect(() => {
         
      if (token) {
-         console.log("check token" , document.cookie);
-         console.log("check token with redux" ,userToken);
+        //  console.log("check token" , document.cookie);
+        //  console.log("check token with redux" ,userToken);
             const jwtToken = token.split('=')[1];
             const decodedToken = jwtDecode(jwtToken);
 
