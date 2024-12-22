@@ -26,7 +26,6 @@ io.on('connection', async (socket) => {
     console.log("User connected: ", socket.id);
 
     const token = socket.handshake.auth.token;
-
     // Get user details from token
     const user = await getUserDetailsFromToken(socket, token);
 
@@ -177,6 +176,10 @@ io.on('connection', async (socket) => {
 
             group.members.forEach((member) => {
                 io.to(member._id.toString()).emit('group:message', updatedgroupMessages);
+                io.to(member._id.toString()).emit('new message', {
+                    senderName: member.name,
+                    text,
+                });
             });
 
             // Optionally, you can send the updated message list to all group members
@@ -215,6 +218,19 @@ io.on('connection', async (socket) => {
             roomId
         });
     });
+    socket.on('start:group:call', async ({ members, roomId }) => {
+        const callerId = socket.data.user._id;
+        members.forEach(member => {
+            if (member._id.toString() !== callerId) { // Exclude the caller
+                io.to(member._id.toString()).emit('incoming-call', {
+                    callerId,
+                    callerName: user.name,
+                    roomId,
+                    // groupName: group.name,
+                });
+            }
+        });
+    });
 
     socket.on('start-group-call', ({ callerId, receiversId, roomId, groupName }) => {
         receiversId.map((receiverId) => {
@@ -238,34 +254,82 @@ io.on('connection', async (socket) => {
     });
 
 
+    const getGroupConversation = async (groupId) => {
+        const groupMessages = await MessageModel.find({ groupId })
+            .sort({ updatedAt: -1 })
+            .populate('msgByUserId', 'name profile_pic');
+
+        const unseenMsgCount = groupMessages.reduce((prev, curr) => {
+            if (!curr.seen) {
+                return prev + 1;
+            }
+            return prev;
+        }, 0);
+
+        return {
+            groupId,
+            unseenMsgCount,
+            lastMsg: groupMessages[groupMessages.length - 1],
+            messages: groupMessages
+        };
+    };
 
     // Handle 'seen' event
-    socket.on('seen', async (msgByUserId) => {
+    socket.on('seen', async (data) => {
+        const { conversationId, conversationType } = data;
+        console.log(conversationId);
         try {
-            const conversation = await ConversationModel.findOne({
-                "$or": [
-                    { sender: user._id, receiver: msgByUserId },
-                    { sender: msgByUserId, receiver: user._id },
-                ]
-            });
+            let conversationMessageId = [];
+            if (conversationType === 'user') {
+                // Direct conversation logic
+                const conversation = await ConversationModel.findOne({
+                    "$or": [
+                        { sender: socket.data.user._id, receiver: conversationId },
+                        { sender: conversationId, receiver: socket.data.user._id },
+                    ]
+                });
 
-            const conversationMessageId = conversation?.messages || [];
+                if (conversation) {
+                    conversationMessageId = conversation.messages || [];
+                }
+            } else if (conversationType === 'group') {
+                // Group conversation logic
+                const groupMessages = await MessageModel.find({
+                    groupId: conversationId
+                });
+                conversationMessageId = groupMessages?.map(msg => msg._id);
+            }
 
-            await MessageModel.updateMany(
-                { _id: { "$in": conversationMessageId }, msgByUserId: msgByUserId },
+            // Update message seen status
+            const data = await MessageModel.updateMany(
+                {
+                    _id: { "$in": conversationMessageId },
+                    msgByUserId: { "$ne": user._id }
+                },
                 { "$set": { seen: true } }
             );
 
-            // Emit updated conversation to both users
-            const conversationSender = await getConversation(user._id.toString());
-            const conversationReceiver = await getConversation(msgByUserId);
+            // Emit updated conversation data
+            if (conversationType === 'user') {
+                const conversationSender = await getConversation(socket.data.user._id.toString());
+                const conversationReceiver = await getConversation(conversationId);
+                io.to(socket.data.user._id.toString()).emit('conversation', conversationSender);
+                io.to(conversationId).emit('conversation', conversationReceiver);
 
-            io.to(user._id.toString()).emit('conversation', conversationSender);
-            io.to(msgByUserId).emit('conversation', conversationReceiver);
+            } else if (conversationType === 'group') {
+                const groupMembers = await Group.findById(conversationId).select('members');
+                const groupConversation = await getGroupConversation(conversationId);
+                // Emit to all group members
+                groupMembers.members.forEach(memberId => {
+                    io.to(memberId.toString()).emit('group:conversation', groupConversation);
+                });
+            }
+
         } catch (error) {
             console.error('Error handling seen status:', error);
         }
     });
+
 
     // Handle disconnection
     socket.on('disconnect', () => {
@@ -282,3 +346,4 @@ module.exports = {
     io,
     server
 };
+
