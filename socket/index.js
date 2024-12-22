@@ -6,6 +6,7 @@ const getUserDetailsFromToken = require('../helpers/getUserDetailsFromToken');
 const UserModel = require('../models/UserModel');
 const { ConversationModel, MessageModel } = require('../models/ConversationModel');
 const getConversation = require('../helpers/getConversation');
+const Group = require('../models/GroupModel');
 
 const app = express();
 
@@ -30,7 +31,7 @@ io.on('connection', async (socket) => {
     const user = await getUserDetailsFromToken(socket, token);
 
     if (user && user._id) {
-        
+
         socket.join(user._id.toString());
         onlineUser.add(user._id.toString());
         io.emit('onlineUser', Array.from(onlineUser));
@@ -43,14 +44,34 @@ io.on('connection', async (socket) => {
     // Handle 'message-page' event
     socket.on('message-page', async (userId) => {
         try {
+            let payload = {}
             const userDetails = await UserModel.findById(userId).select("-password");
-            const payload = {
-                _id: userDetails?._id,
-                name: userDetails?.name,
-                email: userDetails?.email,
-                profile_pic: userDetails?.profile_pic,
-                online: onlineUser.has(userId),
-            };
+            if (userDetails) {
+                payload = {
+                    _id: userDetails?._id,
+                    type: "user",
+                    name: userDetails?.name,
+                    email: userDetails?.email,
+                    profile_pic: userDetails?.profile_pic,
+                    online: onlineUser.has(userId),
+                };
+            } else {
+                const groupDetails = await Group.findById(userId).populate("members");
+                payload = {
+                    _id: groupDetails?._id,
+                    type: "group",
+                    name: groupDetails?.name,
+                    members: groupDetails?.members,
+                    profile_pic: groupDetails?.profile_pic,
+                };
+                const groupMessages = await MessageModel.find({
+                    groupId: groupDetails._id,
+                }).populate('msgByUserId', 'name profile_pic')
+                    .sort({ createdAt: 1 });
+                // Emit previous group messages
+                socket.emit('group:message', groupMessages || []);
+            }
+
             socket.emit('message-user', payload);
 
             // Get previous messages
@@ -127,6 +148,54 @@ io.on('connection', async (socket) => {
             console.error('Error handling new message:', error);
         }
     });
+
+    socket.on('new:group:message', async (data) => {
+        try {
+            const { groupId, text, imageUrl, videoUrl, msgByUserId } = data;
+            console.log(data);
+            // Ensure the group exists
+            const group = await Group.findById(groupId).populate('members');
+            if (!group) {
+                return socket.emit('error', { message: 'Group not found' });
+            }
+
+            // Save the new message
+            const message = new MessageModel({
+                text,
+                imageUrl,
+                videoUrl,
+                msgByUserId,
+                groupId,
+            });
+
+            await message.save();
+
+            const updatedgroupMessages = await MessageModel.find({
+                groupId,
+            }).populate('msgByUserId', 'name profile_pic')
+                .sort({ createdAt: 1 });
+
+            group.members.forEach((member) => {
+                io.to(member._id.toString()).emit('group:message', updatedgroupMessages);
+            });
+
+            // Optionally, you can send the updated message list to all group members
+            // const updatedMessages = await MessageModel.find({ groupId })
+            //     .populate('msgByUserId', 'name profile_pic') // Populate sender details
+            //     .sort({ createdAt: 1 });
+
+            // group.members.forEach((member) => {
+            //     io.to(member._id.toString()).emit('group:messages', {
+            //         groupId,
+            //         messages: updatedMessages,
+            //     });
+            // });
+        } catch (error) {
+            console.error('Error handling new group message:', error);
+            socket.emit('error', { message: 'Failed to send group message' });
+        }
+    });
+
 
     // Handle 'sidebar' event
     socket.on('sidebar', async (currentUserId) => {
@@ -210,5 +279,6 @@ io.on('connection', async (socket) => {
 
 module.exports = {
     app,
+    io,
     server
 };

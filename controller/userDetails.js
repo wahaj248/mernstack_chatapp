@@ -1,19 +1,19 @@
-const getUserDetailsFromToken = require("../helpers/getUserDetailsFromToken")
+const UserModel = require("../models/UserModel");
 
-async function userDetails(request,response){
+async function userDetails(req, res) {
     try {
-        const token = request.cookies.token || ""
+        const userId = req.user._id || ""
 
-        const user = await getUserDetailsFromToken(token)
+        const user = await UserModel.findById(userId).select('-password');
 
-        return response.status(200).json({
-            message : "user details",
-            data : user
+        return res.status(200).json({
+            message: "user details",
+            data: user
         })
     } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true
+        return res.status(500).json({
+            message: error.message || error,
+            error: true
         })
     }
 }

@@ -26,6 +26,11 @@ const messageSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         required: true,
         ref: 'User'
+    },
+    groupId: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Group',
+        default: null
     }
 }, {
     timestamps: true

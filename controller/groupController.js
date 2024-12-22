@@ -1,8 +1,10 @@
+
 const Group = require("../models/GroupModel");
+const { io } = require("../socket");
 
 const createGroup = async (req, res) => {
     const { name, members } = req.body;
-
+    members.push(req.user._id.toString());
     if (!name || !members || members.length === 0) {
         return res.status(400).json({ error: 'Group name and members are required.' });
     }
@@ -22,6 +24,7 @@ const createGroup = async (req, res) => {
 
         // Save the group to the database
         await newGroup.save();
+        io.emit('group-created', newGroup);
 
         res.status(201).json({ message: 'Group created successfully', group: newGroup });
     } catch (error) {

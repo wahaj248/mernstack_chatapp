@@ -32,7 +32,7 @@ router.get('/logout', authenticateToken, logout)
 //update user details
 router.post('/update-user', authenticateToken, updateUserDetails)
 //search user
-router.post("/search-user", authenticateToken, searchUser)
+router.post("/search-user", searchUser)
 
 // group create
 router.post("/create-group", authenticateToken, createGroup)
