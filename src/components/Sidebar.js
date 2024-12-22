@@ -14,6 +14,7 @@ import { FaVideo } from "react-icons/fa6";
 import { logout } from '../redux/userSlice';
 import { MdGroups } from "react-icons/md";
 import SearchGroup from './SearchGroup';
+import getSocketInstance from '../socketSingleton';
 
 const Sidebar = () => {
     const user = useSelector(state => state?.user)
@@ -22,7 +23,7 @@ const Sidebar = () => {
     const [openSearchUser, setOpenSearchUser] = useState(false)
     const [openGroupUser, setOpenGroupUser] = useState(false)
     const [openSearchGroupUser, setOpenSearchGroupUser] = useState(false)
-    const socketConnection = useSelector(state => state?.user?.socketConnection)
+    const socketConnection = getSocketInstance();
     const dispatch = useDispatch()
     const navigate = useNavigate()
 

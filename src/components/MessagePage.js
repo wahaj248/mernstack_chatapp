@@ -14,10 +14,11 @@ import backgroundImage from '../assets/wallapaper.jpeg'
 import { IoMdSend } from "react-icons/io";
 import moment from 'moment'
 import ringtone from '../assets/ringtone.mp3';
+import getSocketInstance from '../socketSingleton';
 
 const MessagePage = () => {
   const params = useParams()
-  const socketConnection = useSelector(state => state?.user?.socketConnection)
+  const socketConnection = getSocketInstance();
   const user = useSelector(state => state?.user)
   const [dataUser, setDataUser] = useState({
     name: "",

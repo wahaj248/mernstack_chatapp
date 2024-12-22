@@ -2,10 +2,9 @@ import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { logout, setOnlineUser, setSocketConnection, setUser } from '../redux/userSlice'
+import {  setOnlineUser,  setUser } from '../redux/userSlice'
 import Sidebar from '../components/Sidebar'
 import logo from '../assets/talkup.png'
-import io from 'socket.io-client'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // Import your notification sound
@@ -13,16 +12,16 @@ import notificationSound from '../assets/notification.mp3';
 import ringtone from '../assets/ringtone.mp3';
 import axiosFetch from '../axios'
 import { BASE_URL } from './BaseUrl'
+import getSocketInstance from '../socketSingleton'
 
 
 const Home = () => {
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
   const userToken = useSelector(state => state?.user?.token)
-  const socketConnection = useSelector(state => state?.user?.socketConnection)
+  const socketConnection = getSocketInstance();
   const [showCallModal, setShowCallModal] = useState(false);
   const [showIncomingCallModal, setShowIncomingCallModal] = useState(false);
   const [callerInfo, setCallerInfo] = useState(null);
@@ -108,11 +107,7 @@ const Home = () => {
 
   /***socket connection */
   useEffect(() => {
-    const socketConnection = io(BASE_URL, {
-      auth: {
-        token: localStorage.getItem('token')
-      },
-    })
+    const socketConnection = getSocketInstance()
     socketConnection.on("connection", (socket) => console.log(`SOCKET CONNECTED ${socket.id}`))
     socketConnection.on('onlineUser', (data) => {
       console.log(data)
@@ -127,7 +122,7 @@ const Home = () => {
       audio.play().catch((err) => console.error('Audio playback failed:', err));
     });
 
-    dispatch(setSocketConnection(socketConnection))
+    // dispatch(setSocketConnection(socketConnection))
 
     return () => {
       socketConnection.disconnect()
