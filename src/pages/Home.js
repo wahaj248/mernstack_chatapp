@@ -29,8 +29,6 @@ const Home = () => {
   const ringtoneRef = useRef(new Audio(ringtone));
   const context = useContext(myContext);
 
-  
-  
   const { socketConnection , setSocketConnection } = context;
   
 
@@ -142,11 +140,11 @@ const Home = () => {
   useEffect(() => {
     if (socketConnection) {
       socketConnection.on('incoming-call', (callerInfo) => {
+     
+        
         // Only show the incoming call modal if we're in the message page
         if (params.userId === callerInfo?.receiverId) {
           setCallerInfo(callerInfo);
-  console.log("infoooooo" , callerInfo);
-
           setShowIncomingCallModal(true);
 
           // Set a timeout to automatically reject the call after 10 seconds
@@ -159,7 +157,7 @@ const Home = () => {
 
       socketConnection.emit('message-page', params.userId);
     }
-  }, [socketConnection, params.userId]);
+  }, [socketConnection, params.userId , user]);
 
   const handleRejectCall = () => {
 

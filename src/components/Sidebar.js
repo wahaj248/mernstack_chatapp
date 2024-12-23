@@ -15,6 +15,7 @@ import { logout } from '../redux/userSlice';
 import { MdGroups } from "react-icons/md";
 import SearchGroup from './SearchGroup';
 import myContext from '../context/myContext';
+import Loading from './Loading';
 
 const Sidebar = () => {
     const user = useSelector(state => state?.user)
@@ -23,6 +24,8 @@ const Sidebar = () => {
     const [openSearchUser, setOpenSearchUser] = useState(false)
     const [openGroupUser, setOpenGroupUser] = useState(false)
     const [openSearchGroupUser, setOpenSearchGroupUser] = useState(false)
+      const [loading, setloading] = useState(false)
+    
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const context = useContext(myContext);
@@ -32,6 +35,7 @@ const Sidebar = () => {
 
     useEffect(() => {
         if (socketConnection) {
+            setloading(true);
             socketConnection.emit('sidebar', user._id)
             socketConnection.on("group:conversation" , (data)=> console.log("data grp" , data));
             
@@ -58,6 +62,7 @@ const Sidebar = () => {
                 })
 
                 setAllUser(conversationUserData)
+                setloading(false);
             })
         }
 
@@ -116,6 +121,9 @@ const Sidebar = () => {
                 <div className='bg-slate-200 p-[0.5px]'></div>
 
                 <div className=' h-[calc(100vh-65px)] overflow-x-hidden overflow-y-auto scrollbar'>
+                    {loading && (
+                        <div className='flex justify-center items-center h-screen'><Loading /> </div>
+                    )}
                     {
                         allUser.length === 0 && (
                             <div className='mt-12'>

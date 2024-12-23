@@ -174,10 +174,6 @@ const MessagePage = () => {
 
   useEffect(() => {
     if (socketConnection) {
-      //  if(params.userId.includes("members")){
-      //    console.log("check user id" , params.userId);
-      //    console.log("check after remove members user id" , params.userId.replace("members",""));
-      //  }
 
       // Emit event to mark messages as seen
       socketConnection.emit('seen', params.userId);
@@ -201,6 +197,9 @@ const MessagePage = () => {
       });
       // Listen for incoming calls (ensure this is only in MessagePage.js)
       socketConnection.on('incoming-call', (callerInfo) => {
+     
+    
+
         // Only show the incoming call modal if we're in the message page
         if (params.userId === callerInfo?.receiverId) {
           setCallerInfo(callerInfo);
