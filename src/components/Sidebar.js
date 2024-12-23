@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { FaUserPlus } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
@@ -14,7 +14,7 @@ import { FaVideo } from "react-icons/fa6";
 import { logout } from '../redux/userSlice';
 import { MdGroups } from "react-icons/md";
 import SearchGroup from './SearchGroup';
-// import getSocketInstance from '../socketSingleton';
+import myContext from '../context/myContext';
 
 const Sidebar = () => {
     const user = useSelector(state => state?.user)
@@ -23,16 +23,12 @@ const Sidebar = () => {
     const [openSearchUser, setOpenSearchUser] = useState(false)
     const [openGroupUser, setOpenGroupUser] = useState(false)
     const [openSearchGroupUser, setOpenSearchGroupUser] = useState(false)
-    const socketConnection = useSelector(state => state?.user?.socketConnection)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const context = useContext(myContext);
+  
+  const {  socketConnection  } = context;
 
-    // Static groups data
-    const groups = [
-        { id: 'group1', name: 'Project Team', lastMsg: 'Meeting at 3 PM', unseenMsg: 2 },
-        { id: 'group2', name: 'Friends', lastMsg: 'Let’s hang out!', unseenMsg: 5 },
-        { id: 'group3', name: 'Family', lastMsg: 'Dinner plans?', unseenMsg: 0 }
-    ];
 
     useEffect(() => {
         if (socketConnection) {
@@ -40,7 +36,6 @@ const Sidebar = () => {
             socketConnection.on("group:conversation" , (data)=> console.log("data grp" , data));
             
             socketConnection.on('conversation', (data) => {
-                // console.log('conversation', data)
 
                 const conversationUserData = data.map((conversationUser, index) => {
                     if (conversationUser?.sender?._id === conversationUser?.receiver?._id) {
@@ -198,7 +193,6 @@ const Sidebar = () => {
                     <h3 className='text-lg font-bold px-4 mb-2 text-slate-800'>Groups</h3>
                     {
                         allUser.map((conv, index) => {
-                            console.log("DFFFFFFFFFADFFFFFF", conv);
                             if (!conv || !conv?.members || conv.type === "user") return null;
                             return (
                                 <>

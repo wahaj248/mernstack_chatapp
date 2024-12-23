@@ -2,7 +2,12 @@ import axios from "axios";
 
 const axiosFetch = async (URL, data = {}, method = "get") => {
     try {
-        const token = localStorage.getItem("token"); 
+        const data = localStorage.getItem("persist:root");
+        const user = data ? JSON.parse(data)?.user : null;
+        const usertoken = user ? JSON.parse(user)?.token : null;
+        const token =  localStorage.getItem('token') || usertoken;
+
+        
         if (!method) throw new Error("HTTP method is required."); 
 
         const response = await axios({

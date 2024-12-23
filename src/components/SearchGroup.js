@@ -9,7 +9,7 @@ import axiosFetch from '../axios';
 
 const SearchGroup = ({ onClose }) => {
     const [groups, setGroups] = useState([]);
-    const [search, setSearch] = useState(""); // Single state for search input
+    const [search, setSearch] = useState(""); 
     const [loading, setLoading] = useState(false);
 
     const fetchGroups = async () => {

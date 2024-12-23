@@ -8,7 +8,7 @@ const UserSearchCard = ({ user, onClose, onSelectUser , isGroup}) => {
   const handleCheckboxChange = (e) => {
     const checked = e.target.checked;
     setIsChecked(checked);
-    onSelectUser(user?._id, checked); // Notify parent about selection
+    onSelectUser(user?._id, checked); 
   };
 
   return (

@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { TiTick } from "react-icons/ti";
-
 import Avatar from './Avatar'
 import { IoMdCall } from "react-icons/io";
 import { FaAngleLeft } from "react-icons/fa6";
@@ -16,12 +15,14 @@ import backgroundImage from '../assets/wallapaper.jpeg'
 import { IoMdSend } from "react-icons/io";
 import moment from 'moment'
 import ringtone from '../assets/ringtone.mp3';
-// import getSocketInstance from '../socketSingleton';
+import myContext from '../context/myContext';
 
 const MessagePage = () => {
   const params = useParams()
-  const socketConnection = useSelector(state => state?.user?.socketConnection)
   const user = useSelector(state => state?.user)
+  const context = useContext(myContext);
+  
+  const {  socketConnection  } = context;
   const [dataUser, setDataUser] = useState({
     name: "",
     email: "",
