@@ -17,23 +17,21 @@ const SearchUser = ({ onClose, isGroup }) => {
     const [name, setName] = useState(""); // State for group name input
     const currentUser = useSelector(state => state?.user)
 
-    const handleSearchUser = async () => {
-        const URL = `${BASE_URL}/api/search-user`;
+    const handleSearchUser = async()=>{
+        const URL = `${BASE_URL}/api/search-user`
         try {
-            setLoading(true);
-            const response = await axiosFetch(URL, {
-                search: search
-            } ,
-        "POST");
-            setLoading(false);
+            setLoading(true)
+            const response = await axios.post(URL,{
+                search : search
+            })
+            setLoading(false)
             const result = response.data.data;
             const filteredUsers = result.filter((user) => user._id !== currentUser?._id);
             setSearchUser(filteredUsers);
         } catch (error) {
-            setLoading(false);
-            toast.error(error?.response?.data?.message);
+            toast.error(error?.response?.data?.message)
         }
-    };
+    }
 
     const handleSelectUser = (userId, isSelected) => {
         setMembers((prev) =>

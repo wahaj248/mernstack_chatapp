@@ -28,6 +28,8 @@ const Home = () => {
   const [callTimeout, setCallTimeout] = useState(null); 
   const ringtoneRef = useRef(new Audio(ringtone));
   const context = useContext(myContext);
+
+  
   
   const { socketConnection , setSocketConnection } = context;
   
@@ -143,6 +145,8 @@ const Home = () => {
         // Only show the incoming call modal if we're in the message page
         if (params.userId === callerInfo?.receiverId) {
           setCallerInfo(callerInfo);
+  console.log("infoooooo" , callerInfo);
+
           setShowIncomingCallModal(true);
 
           // Set a timeout to automatically reject the call after 10 seconds
@@ -208,7 +212,7 @@ const Home = () => {
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full text-center">
             <h2 className="text-lg font-semibold mb-4">Incoming Call</h2>
-            <p className="mb-6">You have an incoming call from {callerInfo?.callerName}</p>
+            <p className="mb-6">You have an incoming call from {callerInfo?.groupName || callerInfo?.callerName}</p>
             <button onClick={handleAcceptCall} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">Accept</button>
             <button onClick={handleRejectCall} className="bg-red-500 text-white px-4 py-2 rounded">Reject</button>
           </div>

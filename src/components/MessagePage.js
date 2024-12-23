@@ -154,7 +154,9 @@ const MessagePage = () => {
     else {
       socketConnection.emit('start:group:call', {
         members: dataUser?.members,
-        roomId // Send the room ID to the receiver
+        roomId ,// Send the room ID to the receiver
+        groupName: dataUser?.name,
+
       })
 
     }
@@ -188,13 +190,11 @@ const MessagePage = () => {
       });
 
       socketConnection.on('message', (data) => {
-        // console.log("single msg", data);
 
         setAllMessage(data);
       });
 
       socketConnection.on('group:message', (data) => {
-        // console.log("grp msg", data);
 
         setAllMessageGroup(data);
 
@@ -375,8 +375,8 @@ const MessagePage = () => {
                     </div>
                     <div className="flex items-center justify-between px-2">
                       <p className="flex-1">{msg.text}</p>
-                      <p className="text-xs ml-2">{moment(msg.createdAt).format('hh:mm')}</p>
-                      {msg?.seen ? <TiTick className="text-blue-500" size={12} /> : <TiTick className="text-grey-500" size={12} />  }
+                      <p className="text-xs ml-2">{moment(msg.createdAt).format('hh:mm')}</p>                      
+                      {user._id === msg?.msgByUserId ? msg?.seen ? <TiTick className="text-blue-500" size={12} /> : <TiTick className="text-grey-500" size={12} /> : "" }
                     </div>
 
                   </div>
@@ -384,7 +384,6 @@ const MessagePage = () => {
               })
             ) : (
               allMessageGroup?.map((msg, index) => {
-                // console.log("allMessageGroup", msg)
                 return (
                   <div className={` p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${user._id === msg?.msgByUserId._id ? "ml-auto bg-teal-100" : "bg-white"}`}>
                     <div className='w-full relative'>
@@ -430,7 +429,7 @@ const MessagePage = () => {
   {/* Timestamp and Tick Icon */}
   <div className="flex flex- ml-2 items-end justify-between text-nowrap">
     <p className="text-xs text-gray-500">{moment(msg.createdAt).format('hh:mm A')}</p>
-    {msg?.seen ? <TiTick className="text-blue-500" size={12} /> : <TiTick className="text-gray-500" size={12} />}
+    {user._id === msg?.msgByUserId._id ? msg?.seen ? <TiTick className="text-blue-500" size={12} /> : <TiTick className="text-gray-500" size={12} /> : ""}
   </div>
 </div>
 

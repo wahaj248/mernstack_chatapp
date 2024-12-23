@@ -201,6 +201,8 @@ const Sidebar = () => {
                                         key={conv?._id}
                                         className='flex items-center gap-2 py-3 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer'
                                         onClick={() => {
+                                            console.log("convoo of grp" , conv);
+                                            
                                             if (socketConnection) {
                                                 conv.unseenMsg = 0;
                                                 socketConnection.emit('seen', {
