@@ -218,7 +218,7 @@ io.on('connection', async (socket) => {
             roomId
         });
     });
-    socket.on('start:group:call', async ({ members, roomId }) => {
+    socket.on('start:group:call', async ({ members, roomId , groupName }) => {
         const callerId = socket.data.user._id;
         members.forEach(member => {
             if (member._id.toString() !== callerId) { // Exclude the caller
@@ -226,7 +226,7 @@ io.on('connection', async (socket) => {
                     callerId,
                     callerName: user.name,
                     roomId,
-                    // groupName: group.name,
+                    groupName,
                 });
             }
         });
