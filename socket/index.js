@@ -64,7 +64,7 @@ io.on('connection', async (socket) => {
                     profile_pic: groupDetails?.profile_pic,
                 };
                 const groupMessages = await MessageModel.find({
-                    groupId: groupDetails._id,
+                    groupId: groupDetails?._id,
                 }).populate('msgByUserId', 'name profile_pic')
                     .sort({ createdAt: 1 });
                 // Emit previous group messages
@@ -219,10 +219,10 @@ io.on('connection', async (socket) => {
         });
     });
     socket.on('start:group:call', async ({ members, roomId , groupName }) => {
-        const callerId = socket.data.user._id;
+        const callerId = socket.data.user._id.toString();
         members.forEach(member => {
-            if (member._id.toString() !== callerId) { // Exclude the caller
-                io.to(member._id.toString()).emit('incoming-call', {
+            if (member?._id?.toString() !== callerId) { // Exclude the caller
+                io.to(member?._id?.toString()).emit('incoming-call', {
                     callerId,
                     callerName: user.name,
                     roomId,
