@@ -318,26 +318,56 @@ const MessagePage = () => {
 
       {/* Call Modal */}
       {showCallModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full text-center">
-            <h2 className="text-lg font-semibold mb-4">Make a Call</h2>
-            <p className="mb-6">Do you want to start a call with {dataUser.name}?</p>
-            <button onClick={handleStartCall} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">Start Call</button>
-            <button onClick={handleCloseCallModal} className="bg-gray-300 px-4 py-2 rounded">Cancel</button>
-          </div>
-        </div>
+       <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+       <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center">
+         <h2 className="text-2xl font-bold text-gray-800 mb-4">Make a Call</h2>
+         <p className="text-gray-600 mb-6">
+           Do you want to start a call with <span className="font-medium text-gray-900">{dataUser.name}</span>?
+         </p>
+         <div className="flex justify-center space-x-4">
+           <button
+             onClick={handleStartCall}
+             className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-md transition-all duration-200 shadow-md"
+           >
+             Start Call
+           </button>
+           <button
+             onClick={handleCloseCallModal}
+             className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium px-6 py-2 rounded-md transition-all duration-200 shadow-md"
+           >
+             Cancel
+           </button>
+         </div>
+       </div>
+     </div>
+     
       )}
 
       {/* Incoming Call Modal */}
       {showIncomingCallModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full text-center">
-            <h2 className="text-lg font-semibold mb-4">Incoming Call</h2>
-            <p className="mb-6">You have an incoming call from {callerInfo?.callerName}</p>
-            <button onClick={handleAcceptCall} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">Accept</button>
-            <button onClick={handleRejectCall} className="bg-red-500 text-white px-4 py-2 rounded">Reject</button>
-          </div>
-        </div>
+       <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+       <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center">
+         <h2 className="text-2xl font-bold text-gray-800 mb-4">Incoming Call</h2>
+         <p className="text-gray-600 mb-6">
+           You have an incoming call from <span className="font-medium text-gray-900">{callerInfo?.callerName}</span>
+         </p>
+         <div className="flex justify-center space-x-4">
+           <button
+             onClick={handleAcceptCall}
+             className="bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-2 rounded-md transition-all duration-200 shadow-md"
+           >
+             Accept
+           </button>
+           <button
+             onClick={handleRejectCall}
+             className="bg-red-500 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-md transition-all duration-200 shadow-md"
+           >
+             Reject
+           </button>
+         </div>
+       </div>
+     </div>
+     
       )}
 
 

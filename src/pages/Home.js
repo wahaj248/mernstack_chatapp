@@ -21,7 +21,7 @@ const Home = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const params = useParams()
-  const userToken = useSelector(state => state?.user?.token)
+  const userToken = useSelector(state => state?.user?.token);
   const [showCallModal, setShowCallModal] = useState(false);
   const [showIncomingCallModal, setShowIncomingCallModal] = useState(false);
   const [callerInfo, setCallerInfo] = useState(null);
