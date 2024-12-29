@@ -9,7 +9,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import notificationSound from '../assets/notification.mp3';
 import ringtone from '../assets/ringtone.mp3';
-import axiosFetch from '../axios'
 import { BASE_URL } from './BaseUrl'
 import { io } from 'socket.io-client'
 import { useContext } from 'react'
@@ -43,8 +42,12 @@ const Home = () => {
 
   const fetchUserDetails = async () => {
     try {
-      const URL = `${BASE_URL}/api/user-details`
-      const response = await axiosFetch(URL);
+      const response = await axios.get(`${BASE_URL}/api/user-details`, {
+        headers: {
+            Authorization: `Bearer ${userToken}`, 
+            'Content-Type': 'application/json',
+        },
+    });
       dispatch(setUser(response.data.data))
     } catch (error) {
       console.log("error", error)

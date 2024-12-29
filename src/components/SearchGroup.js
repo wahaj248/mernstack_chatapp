@@ -5,17 +5,23 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import UserSearchCard from './UserSearchCard';
 import { BASE_URL } from '../pages/BaseUrl';
-import axiosFetch from '../axios';
+import { useSelector } from 'react-redux';
 
 const SearchGroup = ({ onClose }) => {
     const [groups, setGroups] = useState([]);
     const [search, setSearch] = useState(""); 
     const [loading, setLoading] = useState(false);
+    const userToken = useSelector(state => state?.user?.token);
 
     const fetchGroups = async () => {
         try {
             setLoading(true);
-            const response = await axiosFetch(`${BASE_URL}/api/groups`);
+            const response = await axios.get(`${BASE_URL}/api/groups`, {
+                headers: {
+                    Authorization: `Bearer ${userToken}`, 
+                    'Content-Type': 'application/json',
+                },
+            });
             setGroups(response.data.groups || []);
             setLoading(false);
         } catch (error) {
